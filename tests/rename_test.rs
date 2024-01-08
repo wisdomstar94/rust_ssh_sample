@@ -2,6 +2,7 @@ use std::path::Path;
 use library::{ConnectInfo, file_or_folder_rename};
 extern crate dotenv;
 use dotenv::dotenv;
+use ssh2::RenameFlags;
 
 #[test]
 fn file_rename_test() {
@@ -13,7 +14,7 @@ fn file_rename_test() {
 
     let before_file_path = Path::new("/home/ec2-user/my_script.sh");
     let after_file_path = Path::new("/home/ec2-user/f1/f2/f3/my_script.sh");
-    file_or_folder_rename(&sess, before_file_path, after_file_path).unwrap();
+    file_or_folder_rename(&sess, before_file_path, after_file_path, Some(RenameFlags::OVERWRITE)).unwrap();
 
     sess.disconnect(None, "test end", None).unwrap();
   }
@@ -29,7 +30,7 @@ fn file_rename_test2() {
 
     let before_file_path = Path::new("/home/ec2-user/my_script.sh");
     let after_file_path = Path::new("/home/ec2-user/my_script-modify.sh");
-    file_or_folder_rename(&sess, before_file_path, after_file_path).unwrap();
+    file_or_folder_rename(&sess, before_file_path, after_file_path, Some(RenameFlags::OVERWRITE)).unwrap();
 
     sess.disconnect(None, "test end", None).unwrap();
   }
@@ -45,7 +46,7 @@ fn folder_rename_test() {
 
     let before_file_path = Path::new("/home/ec2-user/kkk");
     let after_file_path = Path::new("/home/ec2-user/kkk3/kkk2/kkk");
-    file_or_folder_rename(&sess, before_file_path, after_file_path).unwrap();
+    file_or_folder_rename(&sess, before_file_path, after_file_path, Some(RenameFlags::OVERWRITE)).unwrap();
 
     sess.disconnect(None, "test end", None).unwrap();
   }
@@ -61,7 +62,7 @@ fn folder_rename_test2() {
 
     let before_file_path = Path::new("/home/ec2-user/kkk3");
     let after_file_path = Path::new("/home/ec2-user/kkk3-modify");
-    file_or_folder_rename(&sess, before_file_path, after_file_path).unwrap();
+    file_or_folder_rename(&sess, before_file_path, after_file_path, Some(RenameFlags::OVERWRITE)).unwrap();
 
     sess.disconnect(None, "test end", None).unwrap();
   }

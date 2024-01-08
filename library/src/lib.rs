@@ -1,5 +1,5 @@
 use std::{net::{TcpStream, SocketAddr, ToSocketAddrs}, path::Path, fs::{self, DirEntry}, io::{self, Write, Read}, time::Duration};
-use ssh2::{Session, ErrorCode, Sftp};
+use ssh2::{Session, ErrorCode, Sftp, RenameFlags};
 
 #[derive(Debug)]
 pub struct ConnectInfo {
@@ -181,9 +181,9 @@ pub fn run_command(sess: &Session, command: String) -> Result<String, Error> {
   }
 }
 
-pub fn file_or_folder_rename(sess: &Session, before_file_path: &Path, after_file_path: &Path) -> Result<(), ssh2::Error> {
+pub fn file_or_folder_rename(sess: &Session, before_file_path: &Path, after_file_path: &Path, flag: Option<RenameFlags>) -> Result<(), ssh2::Error> {
   let sftp = sess.sftp().unwrap();
   let target_path: &Path = after_file_path.parent().unwrap();
   remote_mkdir_recursive(&sftp, target_path);
-  sftp.rename(before_file_path, after_file_path, None)
+  sftp.rename(before_file_path, after_file_path, flag)
 }
