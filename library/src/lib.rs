@@ -147,3 +147,8 @@ fn dir_logic(sess: &Session, sftp: &Sftp, local_target_folder: &Path, current_re
 fn file_logic(sess: &Session, _: &Sftp, local_file_path: &Path, remote_file_path: &Path) {
   upload_file(sess, local_file_path, remote_file_path).unwrap();
 }
+
+pub fn remove_file(sess: &Session, remote_file_path: &Path) -> Result<(), ssh2::Error>{
+  let sftp = sess.sftp().unwrap();
+  sftp.unlink(remote_file_path)
+}
