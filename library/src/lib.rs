@@ -148,7 +148,12 @@ fn file_logic(sess: &Session, _: &Sftp, local_file_path: &Path, remote_file_path
   upload_file(sess, local_file_path, remote_file_path).unwrap();
 }
 
-pub fn remove_file(sess: &Session, remote_file_path: &Path) -> Result<(), ssh2::Error>{
+pub fn remove_file(sess: &Session, remote_file_path: &Path) -> Result<(), ssh2::Error> {
   let sftp = sess.sftp().unwrap();
   sftp.unlink(remote_file_path)
+}
+
+pub fn remove_folder(sess: &Session, remote_folder_path: &Path) -> Result<(), ssh2::Error> {
+  let sftp = sess.sftp().unwrap();
+  sftp.rmdir(remote_folder_path)
 }
