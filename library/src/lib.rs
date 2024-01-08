@@ -180,3 +180,10 @@ pub fn run_command(sess: &Session, command: String) -> Result<String, Error> {
     Ok(run_result)
   }
 }
+
+pub fn file_or_folder_rename(sess: &Session, before_file_path: &Path, after_file_path: &Path) -> Result<(), ssh2::Error> {
+  let sftp = sess.sftp().unwrap();
+  let target_path: &Path = after_file_path.parent().unwrap();
+  remote_mkdir_recursive(&sftp, target_path);
+  sftp.rename(before_file_path, after_file_path, None)
+}
