@@ -1,4 +1,4 @@
-use std::{net::{TcpStream, SocketAddr, ToSocketAddrs}, path::Path, fs::{self, DirEntry}, io::{self, Write}, time::Duration};
+use std::{net::{TcpStream, SocketAddr, ToSocketAddrs}, path::Path, fs::{self, DirEntry}, io::{self, Write, Read}, time::Duration};
 use ssh2::{Session, ErrorCode, Sftp};
 
 #[derive(Debug)]
@@ -156,4 +156,27 @@ pub fn remove_file(sess: &Session, remote_file_path: &Path) -> Result<(), ssh2::
 pub fn remove_folder(sess: &Session, remote_folder_path: &Path) -> Result<(), ssh2::Error> {
   let sftp = sess.sftp().unwrap();
   sftp.rmdir(remote_folder_path)
+}
+
+pub fn run_command(sess: &Session, command: String) -> Result<String, Error> {
+  let mut channel = sess.channel_session().unwrap();
+  channel.exec(&command).unwrap();
+  let mut run_result = String::new();
+  let mut error: Option<Error> = None;
+  match channel.read_to_string(&mut run_result) {
+    Ok(_) => {},
+    Err(_) => {
+      error = Some(Error {
+        code: None,
+        msg: "failure get result",
+      });
+    },
+  }
+  channel.wait_close().unwrap();
+  channel.exit_status().unwrap();
+  if let Some(err) = error {
+    Err(err)
+  } else {
+    Ok(run_result)
+  }
 }
